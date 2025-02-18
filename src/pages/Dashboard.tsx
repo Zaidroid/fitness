@@ -58,6 +58,10 @@ export default function Dashboard() {
     },
   ];
 
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
