@@ -5,10 +5,9 @@ export default function Settings() {
   const [notifications, setNotifications] = useState(false);
 
   useEffect(() => {
-    document.documentElement.classList.add('dark'); // Apply dark mode on load
+    document.documentElement.classList.add('dark'); // Ensure dark mode is applied
   }, []);
 
-  // ✅ Toggle dark mode (if user wants to disable it manually)
   function toggleDarkMode() {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
@@ -21,8 +20,8 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-4">
-      <h2 className="text-xl font-semibold text-gray-200">Settings</h2>
+    <div className="max-w-lg mx-auto p-4 bg-gray-900 text-gray-100 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold">Settings</h2>
 
       <div className="space-y-4 mt-4">
         {/* Dark Mode Toggle */}
@@ -31,7 +30,7 @@ export default function Settings() {
           <button
             onClick={toggleDarkMode}
             className={`px-4 py-2 rounded-md ${
-              darkMode ? 'bg-indigo-600 text-white' : 'bg-gray-300'
+              darkMode ? 'bg-indigo-600 text-white' : 'bg-gray-500'
             }`}
           >
             {darkMode ? 'On' : 'Off'}
