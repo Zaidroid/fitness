@@ -20,17 +20,17 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-4 bg-gray-900 text-gray-100 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold">Settings</h2>
+    <div className="max-w-lg mx-auto p-6 bg-gray-950 text-gray-300 rounded-lg shadow-md"> {/* Darker module */}
+      <h2 className="text-xl font-semibold text-gray-200">Settings</h2>
 
       <div className="space-y-4 mt-4">
         {/* Dark Mode Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-gray-900 p-3 rounded-lg">
           <span className="text-sm font-medium text-gray-300">Dark Mode</span>
           <button
             onClick={toggleDarkMode}
             className={`px-4 py-2 rounded-md ${
-              darkMode ? 'bg-indigo-600 text-white' : 'bg-gray-500'
+              darkMode ? 'bg-indigo-600 text-white' : 'bg-gray-600 text-gray-300'
             }`}
           >
             {darkMode ? 'On' : 'Off'}
@@ -38,7 +38,7 @@ export default function Settings() {
         </div>
 
         {/* Notifications Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-gray-900 p-3 rounded-lg">
           <span className="text-sm font-medium text-gray-300">Enable Notifications</span>
           <input
             type="checkbox"
