@@ -23,9 +23,12 @@ export default function Profile() {
   // Fetch user profile from Supabase
   async function fetchProfile() {
     setLoading(true);
+    
+    // ✅ Check if user is authenticated before proceeding
     const { data: user, error } = await supabase.auth.getUser();
-    if (error || !user) {
-      toast.error('Failed to fetch user data.');
+    
+    if (error || !user || !user.user) {
+      toast.error('User not authenticated. Please log in.');
       setLoading(false);
       return;
     }
@@ -52,8 +55,10 @@ export default function Profile() {
   // Save profile changes
   async function saveProfile() {
     setSaving(true);
+    
+    // ✅ Check if user is authenticated before saving
     const { data: user } = await supabase.auth.getUser();
-    if (!user) {
+    if (!user || !user.user) {
       toast.error('Not authenticated.');
       setSaving(false);
       return;
