@@ -1,0 +1,9 @@
+/* src/index.css*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add this class for styling navigation links */
+.nav-link {
+    @apply px-4 py-2 text-gray-700 hover:bg-gray-200 rounded;
+}
