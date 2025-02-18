@@ -1,105 +1,148 @@
-import React from 'react';
-import { Bell, Lock, Eye, Globe, Moon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 export default function Settings() {
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
+  const [notifications, setNotifications] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  // ✅ Fetch user settings from Supabase
+  async function fetchSettings() {
+    setLoading(true);
+
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      toast.error('User not authenticated. Please log in.');
+      setLoading(false);
+      return;
+    }
+
+    const user = session.user;
+    setUserId(user.id);
+
+    const { data, error } = await supabase
+      .from('settings')
+      .select('dark_mode, notifications')
+      .eq('id', user.id)
+      .single();
+
+    if (!error && data) {
+      setDarkMode(data.dark_mode);
+      setNotifications(data.notifications);
+      localStorage.setItem('darkMode', data.dark_mode);
+      updateDarkModeClass(data.dark_mode);
+    }
+
+    setLoading(false);
+  }
+
+  // ✅ Update dark mode state & persist in localStorage
+  function toggleDarkMode() {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+    updateDarkModeClass(newDarkMode);
+  }
+
+  function updateDarkModeClass(enable) {
+    if (enable) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  // ✅ Save settings to Supabase
+  async function saveSettings() {
+    if (!userId) {
+      toast.error('Not authenticated.');
+      return;
+    }
+
+    setSaving(true);
+
+    const { error } = await supabase
+      .from('settings')
+      .upsert({
+        id: userId,
+        dark_mode: darkMode,
+        notifications: notifications,
+      });
+
+    if (error) {
+      toast.error('Failed to save settings.');
+    } else {
+      toast.success('Settings updated!');
+    }
+
+    setSaving(false);
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-      </div>
+    <div className="max-w-lg mx-auto p-4">
+      <h2 className="text-xl font-semibold">Settings</h2>
 
-      <div className="space-y-6">
-        {/* Account Settings */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Account Settings</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-4 border-b">
-              <div className="flex items-center space-x-4">
-                <div className="bg-blue-100 rounded-lg p-2">
-                  <Lock className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Password</h3>
-                  <p className="text-sm text-gray-500">Update your password</p>
-                </div>
-              </div>
-              <button className="text-sm text-indigo-600 hover:text-indigo-900">
-                Change
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between py-4 border-b">
-              <div className="flex items-center space-x-4">
-                <div className="bg-purple-100 rounded-lg p-2">
-                  <Bell className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Notifications</h3>
-                  <p className="text-sm text-gray-500">Manage notification preferences</p>
-                </div>
-              </div>
-              <button className="text-sm text-indigo-600 hover:text-indigo-900">
-                Configure
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between py-4 border-b">
-              <div className="flex items-center space-x-4">
-                <div className="bg-green-100 rounded-lg p-2">
-                  <Eye className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Privacy</h3>
-                  <p className="text-sm text-gray-500">Control your privacy settings</p>
-                </div>
-              </div>
-              <button className="text-sm text-indigo-600 hover:text-indigo-900">
-                Manage
-              </button>
-            </div>
+      {loading ? (
+        <p>Loading settings...</p>
+      ) : (
+        <div className="space-y-4 mt-4">
+          {/* Dark Mode Toggle */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Dark Mode
+            </span>
+            <button
+              onClick={toggleDarkMode}
+              className={`px-4 py-2 rounded-md ${
+                darkMode ? 'bg-indigo-600 text-white' : 'bg-gray-300'
+              }`}
+            >
+              {darkMode ? 'On' : 'Off'}
+            </button>
           </div>
-        </div>
 
-        {/* Preferences */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Preferences</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-4 border-b">
-              <div className="flex items-center space-x-4">
-                <div className="bg-yellow-100 rounded-lg p-2">
-                  <Globe className="h-5 w-5 text-yellow-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Language</h3>
-                  <p className="text-sm text-gray-500">Change display language</p>
-                </div>
-              </div>
-              <select className="text-sm text-gray-900 rounded-md border-gray-300">
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-              </select>
-            </div>
-
-            <div className="flex items-center justify-between py-4 border-b">
-              <div className="flex items-center space-x-4">
-                <div className="bg-indigo-100 rounded-lg p-2">
-                  <Moon className="h-5 w-5 text-indigo-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Theme</h3>
-                  <p className="text-sm text-gray-500">Choose your preferred theme</p>
-                </div>
-              </div>
-              <select className="text-sm text-gray-900 rounded-md border-gray-300">
-                <option>Light</option>
-                <option>Dark</option>
-                <option>System</option>
-              </select>
-            </div>
+          {/* Notifications Toggle */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Enable Notifications
+            </span>
+            <input
+              type="checkbox"
+              checked={notifications}
+              onChange={(e) => setNotifications(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-indigo-600"
+            />
           </div>
+
+          {/* Save Button */}
+          <button
+            onClick={saveSettings}
+            disabled={saving}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
