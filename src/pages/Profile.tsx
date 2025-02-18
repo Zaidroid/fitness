@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@supabase/supabase-js';
 
-// Load Supabase client from environment variables
+// Initialize Supabase client
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -15,28 +15,36 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState(null); // Store user ID for queries
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  // Fetch user profile from Supabase
+  // ✅ Fetch authenticated user and profile data
   async function fetchProfile() {
     setLoading(true);
-    
-    // ✅ Check if user is authenticated before proceeding
-    const { data: user, error } = await supabase.auth.getUser();
-    
-    if (error || !user || !user.user) {
+
+    // Get current session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
       toast.error('User not authenticated. Please log in.');
       setLoading(false);
       return;
     }
 
+    const user = session.user;
+    setUserId(user.id); // Store user ID
+
+    // Fetch profile data from Supabase
     const { data, error: profileError } = await supabase
       .from('profiles')
       .select('full_name, email')
-      .eq('id', user.user.id)
+      .eq('id', user.id)
       .single();
 
     if (profileError) {
@@ -44,36 +52,35 @@ export default function Profile() {
     } else {
       setProfile(data);
     }
+
     setLoading(false);
   }
 
-  // Handle input changes
+  // ✅ Handle input changes
   function handleChange(event) {
     setProfile({ ...profile, [event.target.name]: event.target.value });
   }
 
-  // Save profile changes
+  // ✅ Save profile changes
   async function saveProfile() {
-    setSaving(true);
-    
-    // ✅ Check if user is authenticated before saving
-    const { data: user } = await supabase.auth.getUser();
-    if (!user || !user.user) {
+    if (!userId) {
       toast.error('Not authenticated.');
-      setSaving(false);
       return;
     }
+
+    setSaving(true);
 
     const { error } = await supabase
       .from('profiles')
       .update(profile)
-      .eq('id', user.user.id);
+      .eq('id', userId);
 
     if (error) {
       toast.error('Failed to save changes.');
     } else {
       toast.success('Profile updated!');
     }
+
     setSaving(false);
   }
 
@@ -104,7 +111,6 @@ export default function Profile() {
               value={profile.email}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded-md"
-              disabled
             />
           </div>
 
