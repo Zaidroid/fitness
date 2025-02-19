@@ -41,6 +41,30 @@
             border-radius: 8px;
         }
 
+        .steps h2,
+        .heartrate h2,
+        .calories h2,
+        .sleep h2,
+        .weight h2,
+        .water h2,
+        .exercise h2,
+        .dashboard-title,
+        .profile-tab h2,
+        .settings-tab h2,
+        #main > div > div:nth-child(8) > h2{
+            color: #fff;
+            /* Ensure headings inside cards are white */
+        }
+        .connect-button {
+            background-color: #4CAF50; /* Example button color */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px; /* Add some space below the button */
+        }
+
         .steps p,
         .heartrate p,
         .calories p,
@@ -192,7 +216,10 @@
             background-color: #fff;
             color: #333;
         }
-
+        .light-theme .connect-button{
+             background-color: #4CAF50; /* Green */
+            color: white;
+        }
         /* Add light theme class to setting tab items */
         .light-theme .settings-item {
             background-color: whitesmoke;
@@ -213,6 +240,21 @@
             /* Light text inside cards */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             /* Darker shadow for depth */
+        }
+          .light-theme .steps h2,
+        .light-theme .heartrate h2,
+        .light-theme .calories h2,
+        .light-theme .sleep h2,
+        .light-theme .weight h2,
+        .light-theme .water h2,
+        .light-theme .exercise h2,
+        .light-theme .dashboard-title,
+        .light-theme .profile-tab h2,
+        .light-theme .settings-tab h2,
+        .light-theme #main > div > div:nth-child(8) > h2
+         {
+            color: #333;
+            /* Ensure headings inside cards are white */
         }
 
         /* Add light theme to the boxes/cards text */
@@ -286,42 +328,35 @@
     </div>
 
     <div id="main">
+        <h1 class = "dashboard-title">Dashboard</h1>
+        <button class="connect-button">Connect Google Fit</button>
         <div class="content">
-            <div class="steps">
-                <h2>Steps</h2>
-                <p>Today's Steps: 8,542</p>
-            </div>
             <div class="heartrate">
                 <h2>Heart Rate</h2>
                 <p>Current: 72 bpm</p>
             </div>
-            <div class="calories">
-                <h2>Calories Burned</h2>
-                <p>Total: 2,150 kcal</p>
+             <div class="steps">
+                <h2>Steps</h2>
+                <p>Today's Steps: 8,542</p>
             </div>
             <div class="sleep">
                 <h2>Sleep</h2>
                 <p>Last Night: 7.5 hours</p>
             </div>
-            <div class="weight">
-                <h2>Weight</h2>
-                <p>Current: 165 lbs</p>
-            </div>
-            <div class="water">
-                <h2>Water Intake</h2>
-                <p>Today: 2.5 liters</p>
+            <div class="calories">
+                <h2>Calories Burned</h2>
+                <p>Total: 2,150 kcal</p>
             </div>
             <div class="exercise">
                 <h2>Exercise</h2>
                 <p>Today: 45 minutes</p>
             </div>
 
-            <div class="profile-tab">
+             <div class="profile-tab">
                 <h2>Profile</h2>
                 <p>Name: John Doe</p>
                 <p>Age: 30</p>
-                </div>
-
+            </div>
             <div class="settings-tab" id="settings">
                 <h2>Settings</h2>
                 <div class="settings-item" data-action="toggleTheme">Dark Theme</div>
@@ -333,90 +368,98 @@
         </div>
     </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Hamburger menu functionality
-                const hamburgerMenu = document.querySelector('.hamburger-menu');
-                const sidebar = document.getElementById('mySidebar');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu functionality
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const sidebar = document.getElementById('mySidebar');
 
-                hamburgerMenu.addEventListener('click', function() {
-                    this.classList.toggle('change'); // Toggle the 'change' class
-                    if (sidebar.style.width === "250px") {
-                        closeNav();
-                    } else {
-                        openNav();
-                    }
-                });
-
-                // --- Settings Functionality ---
-                const settingsItems = document.querySelectorAll('.settings-item');
-
-                settingsItems.forEach(item => {
-                    item.addEventListener('click', function() {
-                        const action = this.dataset.action; // Get the action from the data-action attribute
-
-                        switch (action) {
-                            case 'toggleTheme':
-                                toggleTheme();
-                                break;
-                            case 'clearData':
-                                clearData(); // Implement this function if needed
-                                break;
-                            case 'notification':
-                                // Add notification toggle logic
-                                break;
-                            case 'language':
-                                // Add language change logic
-                                break;
-                        }
-                    });
-                });
-
-                // Get the theme toggle element
-                const themeToggle = document.querySelector('[data-action="toggleTheme"]');
-                // Get the saved theme from local storage
-                let currentTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
-
-                // Function to apply the current theme
-                function applyTheme() {
-                    document.body.classList.toggle('light-theme', currentTheme === 'light');
-                    // Update the text of the theme toggle button
-                    themeToggle.textContent = currentTheme === 'dark' ? 'Light Theme' : 'Dark Theme';
-                }
-
-                // Initial application of the theme
-                applyTheme();
-
-                // Theme toggle function
-                function toggleTheme() {
-                    currentTheme = currentTheme === 'dark' ? 'light' : 'dark'; // Toggle the theme
-                    localStorage.setItem('theme', currentTheme); // Save to localStorage
-                    applyTheme(); // Apply the new theme
-                }
-
-
-                function openNav() {
-                    document.getElementById("mySidebar").style.width = "250px";
-                    document.getElementById("main").style.marginLeft = "250px";
-                }
-
-                function closeNav() {
-                    document.getElementById("mySidebar").style.width = "0";
-                    document.getElementById("main").style.marginLeft = "0";
-                }
-
-
-                // --- Example Functions (Implement as needed) ---
-
-                function clearData() {
-                    // Example: Clear localStorage
-                    localStorage.clear();
-                    alert('Data cleared!'); //  user feedback
-                    //  reload the page or update the UI to reflect the cleared data
-                    location.reload(); // Simple way to refresh the UI
+            hamburgerMenu.addEventListener('click', function() {
+                this.classList.toggle('change'); // Toggle the 'change' class
+                if (sidebar.style.width === "250px") {
+                    closeNav();
+                } else {
+                    openNav();
                 }
             });
-        </script>
+
+            // --- Settings Functionality ---
+            const settingsItems = document.querySelectorAll('.settings-item');
+
+            settingsItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action; // Get the action from the data-action attribute
+
+                    switch (action) {
+                        case 'toggleTheme':
+                            toggleTheme();
+                            break;
+                        case 'clearData':
+                            clearData(); // Implement this function if needed
+                            break;
+                        case 'notification':
+                            // Add notification toggle logic
+                            break;
+                        case 'language':
+                            // Add language change logic
+                            break;
+                    }
+                });
+            });
+
+            // Get the theme toggle element
+            const themeToggle = document.querySelector('[data-action="toggleTheme"]');
+            // Get the saved theme from local storage, defaulting to dark if none is found
+            let currentTheme = localStorage.getItem('theme') || 'dark';
+
+            // Function to apply the current theme
+            function applyTheme() {
+                if (currentTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                    themeToggle.textContent = 'Dark Theme'; // Change button text
+                } else {
+                    document.body.classList.remove('light-theme');
+                    themeToggle.textContent = 'Light Theme'; // Change button text
+                }
+            }
+
+
+            // Initial application of the theme
+            applyTheme();
+
+            // Theme toggle function
+            function toggleTheme() {
+                // Toggle the theme
+                currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                // Save the new theme to localStorage
+                localStorage.setItem('theme', currentTheme);
+                // Apply the new theme
+                applyTheme();
+            }
+
+
+            function openNav() {
+                document.getElementById("mySidebar").style.width = "250px";
+                document.getElementById("main").style.marginLeft = "250px";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidebar").style.width = "0";
+                document.getElementById("main").style.marginLeft = "0";
+            }
+
+
+            // --- Example Functions (Implement as needed) ---
+
+            function clearData() {
+                // Example: Clear localStorage
+                localStorage.clear();
+                alert('Data cleared!'); //  user feedback
+                //  reload the page or update the UI to reflect the cleared data
+                location.reload(); // Simple way to refresh the UI
+            }
+        });
+    </script>
 </body>
 
 </html>
