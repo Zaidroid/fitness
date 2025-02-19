@@ -333,7 +333,90 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Hamburger menu functionality
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                const sidebar = document.getElementById('mySidebar');
+
+                hamburgerMenu.addEventListener('click', function() {
+                    this.classList.toggle('change'); // Toggle the 'change' class
+                    if (sidebar.style.width === "250px") {
+                        closeNav();
+                    } else {
+                        openNav();
+                    }
+                });
+
+                // --- Settings Functionality ---
+                const settingsItems = document.querySelectorAll('.settings-item');
+
+                settingsItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const action = this.dataset.action; // Get the action from the data-action attribute
+
+                        switch (action) {
+                            case 'toggleTheme':
+                                toggleTheme();
+                                break;
+                            case 'clearData':
+                                clearData(); // Implement this function if needed
+                                break;
+                            case 'notification':
+                                // Add notification toggle logic
+                                break;
+                            case 'language':
+                                // Add language change logic
+                                break;
+                        }
+                    });
+                });
+
+                // Get the theme toggle element
+                const themeToggle = document.querySelector('[data-action="toggleTheme"]');
+                // Get the saved theme from local storage
+                let currentTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+
+                // Function to apply the current theme
+                function applyTheme() {
+                    document.body.classList.toggle('light-theme', currentTheme === 'light');
+                    // Update the text of the theme toggle button
+                    themeToggle.textContent = currentTheme === 'dark' ? 'Light Theme' : 'Dark Theme';
+                }
+
+                // Initial application of the theme
+                applyTheme();
+
+                // Theme toggle function
+                function toggleTheme() {
+                    currentTheme = currentTheme === 'dark' ? 'light' : 'dark'; // Toggle the theme
+                    localStorage.setItem('theme', currentTheme); // Save to localStorage
+                    applyTheme(); // Apply the new theme
+                }
+
+
+                function openNav() {
+                    document.getElementById("mySidebar").style.width = "250px";
+                    document.getElementById("main").style.marginLeft = "250px";
+                }
+
+                function closeNav() {
+                    document.getElementById("mySidebar").style.width = "0";
+                    document.getElementById("main").style.marginLeft = "0";
+                }
+
+
+                // --- Example Functions (Implement as needed) ---
+
+                function clearData() {
+                    // Example: Clear localStorage
+                    localStorage.clear();
+                    alert('Data cleared!'); //  user feedback
+                    //  reload the page or update the UI to reflect the cleared data
+                    location.reload(); // Simple way to refresh the UI
+                }
+            });
+        </script>
 </body>
 
 </html>
