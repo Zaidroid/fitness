@@ -6,79 +6,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker</title>
     <style>
-        /* Reset some default styles */
+        /* --- Global Reset --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* --- Variables (for easy theme switching) --- */
+        :root {
+            --bg-color: #121212;
+            --text-color: #fff;
+            --card-bg-color: #2c2c2c;
+            --card-border-color: #444;
+            --card-text-color: #eee;
+            --sidebar-bg-color: #1b1b1b;
+            --sidebar-text-color: #ddd;
+            --button-bg-color: #4CAF50;
+            --button-text-color: #fff;
+            --settings-item-bg-color: #333;
+            --settings-item-text-color: #eee;
+        }
+
+        .light-theme {
+            --bg-color: #fff;
+            --text-color: #333;
+            --card-bg-color: #f9f9f9;
+            --card-border-color: #ddd;
+            --card-text-color: #555;
+            --sidebar-bg-color: #f0f0f0;
+            --sidebar-text-color: #333;
+            --button-bg-color: #4CAF50;
+            /* Same as dark theme */
+            --button-text-color: #fff;
+            /* Same as dark theme */
+            --settings-item-bg-color: #f0f0f0;
+            --settings-item-text-color: #333;
+        }
+
+        /* --- Base Styles --- */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #fff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Sidebar Styles */
+        /* --- Sidebar --- */
         .sidebar {
             height: 100%;
             width: 0;
             position: fixed;
+            z-index: 10;
             top: 0;
             left: 0;
-            background-color: #1b1b1b;
+            background-color: var(--sidebar-bg-color);
             overflow-x: hidden;
             transition: 0.5s;
             padding-top: 60px;
-            z-index: 10; /* Ensure sidebar is above main content */
         }
 
         .sidebar a {
             padding: 15px 25px;
             text-decoration: none;
             font-size: 18px;
-            color: #ddd;
+            color: var(--sidebar-text-color);
             display: block;
             transition: 0.3s;
-            white-space: nowrap;
         }
 
         .sidebar a:hover {
-            color: #fff;
-            background-color: #333;
+            color: #fff; /* Keep highlight consistent */
+            background-color: #444; /* Keep highlight consistent */
+        }
+        .light-theme .sidebar a:hover{
+             color: black;
+            background-color: rgb(184, 184, 184);
         }
 
         .sidebar .closebtn {
             position: absolute;
-            top: 0;
+            top: 15px; /* Adjusted for better mobile view */
             right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-            color: #ddd;
+            font-size: 30px; /* Adjusted for better mobile view */
+            color: var(--sidebar-text-color);
             cursor: pointer;
         }
 
-        /* Hamburger Menu */
+        /* --- Hamburger Menu --- */
         .hamburger-menu {
-            position: fixed; /* Fixed position */
+            position: fixed;
             top: 10px;
             left: 10px;
             cursor: pointer;
-            z-index: 20; /* Ensure hamburger is above sidebar */
+            z-index: 20;
         }
 
         .bar {
             width: 25px;
             height: 3px;
-            background-color: #fff;
+            background-color: var(--text-color);
             margin: 5px 0;
             transition: 0.4s;
         }
 
-        /* Hamburger "X" animation */
         .change .bar1 {
             transform: rotate(-45deg) translate(-5px, 6px);
         }
@@ -91,60 +124,61 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
-        /* Main Content Area */
+        /* --- Main Content Area --- */
         #main {
             flex: 1;
             padding: 20px;
             transition: margin-left 0.5s;
-            /* For sidebar push effect */
         }
-        /* Header */
-        .header{
+
+        /* --- Header --- */
+        .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
 
         .dashboard-title {
             font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 20px;
         }
 
-        /* Card Styles */
+        /* --- Connect Button --- */
+        .connect-button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            white-space: nowrap; /* Prevent button text from wrapping */
+        }
+
+        /* --- Cards --- */
         .card {
-            background-color: #2c2c2c;
-            border: 1px solid #444;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--card-border-color);
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
         }
 
         .card h2 {
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
-            color: #fff;
+            color: var(--text-color); /* Use main text color */
         }
 
         .card p {
-            color: #eee;
+            color: var(--card-text-color);
         }
 
-        /* Connect Button */
-        .connect-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-          /* Settings Item */
+        /* --- Settings Items --- */
         .settings-item {
-            background-color: #333;
-            color: #eee;
+            background-color: var(--settings-item-bg-color);
+            color: var(--settings-item-text-color);
             padding: 10px;
             margin-bottom: 5px;
             border-radius: 4px;
@@ -153,80 +187,41 @@
         }
 
         .settings-item:hover {
-            background-color: #444;
+            background-color: #444; /* Consistent hover effect */
         }
-
-        /* Light Theme Styles */
-        .light-theme {
-            background-color: #fff;
-            color: #333;
-        }
-
-        .light-theme .sidebar {
-            background-color: #f0f0f0;
-        }
-
-        .light-theme .sidebar a {
-            color: #333;
-        }
-
-        .light-theme .sidebar a:hover {
+        .light-theme .settings-item:hover{
             background-color: #ddd;
         }
 
-        .light-theme .sidebar .closebtn {
-            color: #333;
-        }
+        /* --- Mobile Styles (Default) --- */
+        /* (No specific styles needed here - mobile is the base) */
 
-        .light-theme .bar {
-            background-color: #333;
-        }
-
-        .light-theme .card {
-            background-color: #f9f9f9;
-            border-color: #ddd;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .light-theme .card h2 {
-            color: #333;
-        }
-
-        .light-theme .card p {
-            color: #555;
-        }
-         .light-theme .settings-item {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        .light-theme .settings-item:hover {
-            background-color: #ddd;
-        }
-
-
-        /* Desktop Styles (using media query) */
+        /* --- Desktop Styles (Media Query) --- */
         @media (min-width: 768px) {
             .sidebar {
-                width: 250px; /* Show sidebar by default on desktop */
-                padding-top: 20px;
+                width: 250px;
+                padding-top: 20px; /* Reset to original padding */
             }
 
             .hamburger-menu {
-                display: none; /* Hide hamburger on desktop */
+                display: none;
             }
 
             #main {
-                margin-left: 250px; /* Push content to the right */
+                margin-left: 250px;
+            }
+
+            .header {
+                margin-bottom: 30px; /* Add more space on desktop */
             }
 
             .content {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 20px;
             }
-             .header{
-                margin-left: 0;
+            .closebtn{
+                margin-top: 0;
             }
         }
     </style>
@@ -248,10 +243,11 @@
     </div>
 
     <div id="main">
-        <div class = "header">
-           <h1 class="dashboard-title">Dashboard</h1>
-           <button class="connect-button">Connect Google Fit</button>
+        <div class="header">
+            <h1 class="dashboard-title">Dashboard</h1>
+            <button class="connect-button">Connect Google Fit</button>
         </div>
+
         <div class="content">
             <div class="card heartrate">
                 <h2>Heart Rate</h2>
@@ -273,13 +269,14 @@
                 <h2>Exercise</h2>
                 <p>Today: 45 minutes</p>
             </div>
+
             <div class="card profile-tab">
                 <h2>Profile</h2>
                 <p>Name: John Doe</p>
                 <p>Age: 30</p>
             </div>
 
-             <div class="card settings-tab">
+            <div class="card settings-tab">
                 <h2>Settings</h2>
                 <div class="settings-item" data-action="toggleTheme">Dark Theme</div>
                 <div class="settings-item" data-action="clearData">Clear Data</div>
@@ -293,21 +290,21 @@
         document.addEventListener('DOMContentLoaded', function() {
             const hamburgerMenu = document.querySelector('.hamburger-menu');
             const sidebar = document.getElementById('mySidebar');
+            const themeToggle = document.querySelector('[data-action="toggleTheme"]');
+            let currentTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+
+            // Apply initial theme
+            applyTheme();
 
             hamburgerMenu.addEventListener('click', function() {
                 this.classList.toggle('change');
-                if (sidebar.style.width === "250px") {
-                    closeNav();
-                } else {
-                    openNav();
-                }
+                sidebar.style.width = sidebar.style.width === '250px' ? '0' : '250px';
+                 document.getElementById("main").style.marginLeft =  document.getElementById("main").style.marginLeft === '250px' ? '0' : '250px';
             });
 
-            const settingsItems = document.querySelectorAll('.settings-item');
-            settingsItems.forEach(item => {
+            document.querySelectorAll('.settings-item').forEach(item => {
                 item.addEventListener('click', function() {
-                    const action = this.dataset.action;
-                    switch (action) {
+                    switch (this.dataset.action) {
                         case 'toggleTheme':
                             toggleTheme();
                             break;
@@ -315,18 +312,14 @@
                             clearData();
                             break;
                         case 'notification':
-                            // TODO: Implement notification toggle
+                            // TODO: Implement
                             break;
                         case 'language':
-                            // TODO: Implement language change
+                            // TODO: Implement
                             break;
                     }
                 });
             });
-
-            let currentTheme = localStorage.getItem('theme') || 'dark';
-            const themeToggle = document.querySelector('[data-action="toggleTheme"]');
-            applyTheme();
 
             function applyTheme() {
                 document.body.classList.toggle('light-theme', currentTheme === 'light');
@@ -337,16 +330,6 @@
                 currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 localStorage.setItem('theme', currentTheme);
                 applyTheme();
-            }
-
-            function openNav() {
-                sidebar.style.width = '250px';
-                document.getElementById("main").style.marginLeft = "250px";
-            }
-
-            function closeNav() {
-                sidebar.style.width = '0';
-                 document.getElementById("main").style.marginLeft = "0";
             }
 
             function clearData() {
