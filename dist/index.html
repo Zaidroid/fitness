@@ -1,14 +1,339 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Z Health</title>
-    <script type="module" crossorigin src="/assets/index-DsQg458X.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BnMK8YXK.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <style>
+        /* General Dark Theme Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            /* Dark background */
+            color: #ffffff;
+            /* Light text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Style for the cards/boxes */
+        .steps,
+        .heartrate,
+        .calories,
+        .sleep,
+        .weight,
+        .water,
+        .exercise {
+            background-color: #2c2c2c;
+            /* Slightly lighter dark background for cards */
+            border: 1px solid #444;
+            /* Subtle dark border */
+            color: #eee;
+            /* Light text inside cards */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            /* Darker shadow for depth */
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .steps p,
+        .heartrate p,
+        .calories p,
+        .sleep p,
+        .weight p,
+        .water p,
+        .exercise p {
+            color: #eee;
+        }
+
+        /* Style the settings items */
+        .settings-item {
+            background-color: #333;
+            /* Dark background for settings items */
+            color: #eee;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            /* Indicate clickability */
+            transition: background-color 0.2s;
+            /* Smooth transition on hover */
+        }
+
+        .settings-item:hover {
+            background-color: #444;
+            /* Slightly lighter on hover */
+        }
+
+        /* Hamburger Menu (Mobile) */
+        .hamburger-menu {
+            display: none;
+            /* Hidden by default */
+            position: absolute;
+            /* Position over content */
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            z-index: 100;
+            /* Ensure it's on top */
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            /* White bars */
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        /* Rotate bars to create 'X' on click */
+        .change .bar1 {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .change .bar2 {
+            opacity: 0;
+        }
+
+        .change .bar3 {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Sidebar Styles (Mobile) - Modified for dark theme and positioning */
+        #mySidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #1b1b1b;
+            /* Dark sidebar background */
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        #mySidebar a {
+            padding: 15px 25px;
+            /* More padding */
+            text-decoration: none;
+            font-size: 18px;
+            color: #ddd;
+            /* Light text in sidebar */
+            display: block;
+            transition: 0.3s;
+            white-space: nowrap;
+            /* Prevent text wrapping */
+        }
+
+        #mySidebar a:hover {
+            color: #fff;
+            /* Brighter on hover */
+            background-color: #333;
+            /* Darker background on hover */
+        }
+
+        #mySidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            color: #ddd;
+        }
+
+        /* Main Content - Push to the right when sidebar is open (Mobile) */
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+            margin-left: 0;
+            /* Initially no margin */
+        }
+
+        /* Media Query for Mobile */
+        @media screen and (max-width: 768px) {
+            .hamburger-menu {
+                display: block;
+                /* Show hamburger menu on smaller screens */
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+                /* Stack elements vertically */
+                /* Adjust padding and margins as needed */
+                padding: 10px;
+                margin-left: 0;
+            }
+
+            .settings-tab,
+            .profile-tab {
+                margin-left: 0;
+            }
+
+            #mySidebar {
+                padding-top: 15px;
+            }
+
+            #mySidebar .closebtn {
+                font-size: 30px;
+                margin-top: 15px;
+            }
+        }
+
+        /* Style for light theme */
+        .light-theme {
+            background-color: #fff;
+            color: #333;
+        }
+
+        /* Add light theme class to setting tab items */
+        .light-theme .settings-item {
+            background-color: whitesmoke;
+            color: #333;
+        }
+
+        /* Add light theme to the  boxes/cards */
+        .light-theme .steps,
+        .light-theme .heartrate,
+        .light-theme .calories,
+        .light-theme .sleep,
+        .light-theme .weight,
+        .light-theme .water,
+        .light-theme .exercise {
+            background-color: #f9f9f9;
+            /* Slightly lighter dark background for cards */
+            color: #333;
+            /* Light text inside cards */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            /* Darker shadow for depth */
+        }
+
+        /* Add light theme to the boxes/cards text */
+        .light-theme .steps p,
+        .light-theme .heartrate p,
+        .light-theme .calories p,
+        .light-theme .sleep p,
+        .light-theme .weight p,
+        .light-theme .water p,
+        .light-theme .exercise p {
+            color: #333
+        }
+
+        /* Add light theme to the  hamburger menu */
+        .light-theme .hamburger-menu .bar {
+            background-color: #333;
+        }
+
+        /* Add light theme class to sidebar */
+        .light-theme #mySidebar {
+            background-color: rgb(230, 230, 230);
+        }
+
+        /* Add light theme class to sidebar links*/
+        .light-theme #mySidebar a {
+            color: black;
+        }
+
+        /* Add light theme class to close button in  sidebar */
+        .light-theme #mySidebar .closebtn {
+            color: black;
+        }
+
+        /* Add light theme class to close button in sidebar on hover */
+        .light-theme #mySidebar a:hover {
+            color: black;
+            background-color: rgb(184, 184, 184);
+        }
+
+        /* Basic styling for the profile tab (add more as needed) */
+        .profile-tab {
+            margin-top: 20px;
+            /* Add some spacing */
+        }
+
+        /* Styles for the main content area */
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            flex-grow: 1;
+            /* Allow content to grow and fill space */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hamburger-menu">
+        <div class="bar bar1"></div>
+        <div class="bar bar2"></div>
+        <div class="bar bar3"></div>
+    </div>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <a href="#">Profile</a>
+        <a href="#">Dashboard</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+    </div>
+
+    <div id="main">
+        <div class="content">
+            <div class="steps">
+                <h2>Steps</h2>
+                <p>Today's Steps: 8,542</p>
+            </div>
+            <div class="heartrate">
+                <h2>Heart Rate</h2>
+                <p>Current: 72 bpm</p>
+            </div>
+            <div class="calories">
+                <h2>Calories Burned</h2>
+                <p>Total: 2,150 kcal</p>
+            </div>
+            <div class="sleep">
+                <h2>Sleep</h2>
+                <p>Last Night: 7.5 hours</p>
+            </div>
+            <div class="weight">
+                <h2>Weight</h2>
+                <p>Current: 165 lbs</p>
+            </div>
+            <div class="water">
+                <h2>Water Intake</h2>
+                <p>Today: 2.5 liters</p>
+            </div>
+            <div class="exercise">
+                <h2>Exercise</h2>
+                <p>Today: 45 minutes</p>
+            </div>
+
+            <div class="profile-tab">
+                <h2>Profile</h2>
+                <p>Name: John Doe</p>
+                <p>Age: 30</p>
+                </div>
+
+            <div class="settings-tab" id="settings">
+                <h2>Settings</h2>
+                <div class="settings-item" data-action="toggleTheme">Dark Theme</div>
+                <div class="settings-item" data-action="clearData">Clear Data</div>
+                <div class="settings-item" data-action="notification">Notification</div>
+                <div class="settings-item" data-action="language">Language</div>
+                <!-- Add more settings items here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
 </html>
